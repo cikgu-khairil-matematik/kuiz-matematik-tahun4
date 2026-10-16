@@ -52,7 +52,7 @@ create or replace function public.ceria_is_manager(p_class_id uuid)
 returns boolean language sql stable security definer set search_path='' as $$
  select exists(select 1 from public.ceria_class_managers where class_id=p_class_id and user_id=auth.uid());
 $$;
-revoke all on function public.ceria_is_manager(uuid) from public;
+revoke all on function public.ceria_is_manager(uuid) from public,anon;
 grant execute on function public.ceria_is_manager(uuid) to authenticated;
 alter table public.ceria_managers enable row level security;
 alter table public.ceria_classes enable row level security;
@@ -126,7 +126,7 @@ begin
  if p_mode is null or p_mode not in ('topic','uasa','matriks') or (p_mode='uasa' and p_grade<4) or (p_mode<>'topic' and (p_set is null or p_set not between 1 and 3)) then raise exception 'Jenis latihan tidak sah.';end if;
  if p_answers is null or jsonb_typeof(p_answers)<>'array' or octet_length(p_answers::text)>50000 then raise exception 'Jawapan tidak sah.';end if;
  select count(*),count(distinct x->>'id') into v_count,v_distinct from jsonb_array_elements(p_answers) x;
- if v_count<>v_distinct or v_count<>case p_mode when 'topic' then 10 when 'uasa' then 21 else 29 end then raise exception 'Bilangan item latihan tidak sah.';end if;
+ if v_count<>v_distinct or v_count<>(case p_mode when 'topic' then 10 when 'uasa' then 21 else 29 end) then raise exception 'Bilangan item latihan tidak sah.';end if;
  if (select count(*) from public.ceria_attempts where student_id=auth.uid() and submitted_at>now()-interval '1 hour')>=60 then raise exception 'Had percubaan sejam dicapai. Cuba kemudian.';end if;
  select count(*),coalesce(sum(k.marks),0),coalesce(sum(case when ceria_private.equivalent(x->>'value',k.answer) then k.marks else 0 end),0)
  into v_valid,v_total,v_score
