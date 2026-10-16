@@ -13,7 +13,7 @@ Dashboard ceria dalam Bahasa Malaysia untuk latihan Matematik sekolah rendah. Sa
 - Kod integrasi awan: sesi murid tanpa e-mel, kod kelas, beberapa kelas, akaun pengurusan, rekod percubaan, penapisan kelas, purata pencapaian dan eksport CSV.
 - Markah awan dikira semula oleh fungsi SQL menggunakan 1,479 kunci soalan. Pelayar tidak dibenarkan memasukkan atau mengubah markah secara terus.
 
-**Status:** Fungsi dan aliran peranti telah diuji secara automatik. Sambungan sebenar Supabase, polisi RLS pada pelayan, serta penerbitan GitHub Pages belum diuji atau diaktifkan dalam pakej ini. Tiada URL atau kunci projek sebenar dimasukkan. Pakej ini tidak mendakwa akaun, repositori atau pangkalan data telah dicipta.
+**Status:** Fungsi dan aliran peranti telah diuji secara automatik. Sambungan sebenar Supabase, polisi RLS pada pelayan, serta penerbitan GitHub Pages belum diuji atau diaktifkan dalam pakej ini. Akaun GitHub cikgu-khairil-matematik dan repositori kuiz-matematik-tahun4 telah dicipta. Supabase belum diaktifkan; tiada URL atau kunci projek sebenar dimasukkan.
 
 ## 1. Supabase
 
@@ -39,7 +39,7 @@ window.CERIA_SUPABASE = Object.freeze({
 
 Jangan masukkan `service_role`, secret API key, token peribadi, kata laluan pangkalan data atau kata laluan pengguna ke repositori. Publishable key memang digunakan di pelayar; kawalan akses dikuatkuasakan pada pelayan.
 
-7. Pada projek ujian, jalankan `tests/rls.sql` melalui SQL Editor. Ujian itu menyemak pengasingan dua murid, akses pengurus kelas yang ditugaskan, larangan menaik taraf peranan sendiri dan penskoran pecahan setara. Ia menggunakan transaksi ROLLBACK supaya data ujian tidak kekal.
+7. Pada projek ujian, jalankan `rls-test.sql` melalui SQL Editor. Ujian itu menyemak pengasingan dua murid, akses pengurus kelas yang ditugaskan, larangan menaik taraf peranan sendiri dan penskoran pecahan setara. Ia menggunakan transaksi ROLLBACK supaya data ujian tidak kekal.
 8. Uji dua sesi pelayar berbeza dengan kelas berlainan sebelum memasukkan data sebenar.
 
 ## 2. GitHub Pages
@@ -82,16 +82,16 @@ Keahlian pengurusan hanya boleh ditetapkan pentadbir pangkalan data. Murid tidak
 Keperluan pembangunan: Node.js 22 atau lebih baharu. Tiada pemasangan pakej npm diperlukan.
 
 ```sh
-node tests/bank.cjs
-node tests/flows.cjs
-node tests/cloud.cjs
-node scripts/build.cjs
+node bank-test.cjs
+node flows-test.cjs
+node cloud-test.cjs
+node build.cjs
 ```
 
 Jika `bank.js` berubah, jana semula kunci jawapan dan jalankan SQL yang terhasil pada Supabase sebelum menerbitkan kod baharu:
 
 ```sh
-node scripts/generate-answer-keys.cjs
+node generate-answer-keys.cjs
 ```
 
 Ujian peranti menggunakan simulasi DOM dan rangkaian; ia tidak menggantikan ujian visual dalam pelayar atau ujian langsung Supabase. Kod klien statik membekalkan soalan dan jawapan untuk latihan pembelajaran, maka ini bukan sistem peperiksaan berpengawasan yang menyembunyikan jawapan.
