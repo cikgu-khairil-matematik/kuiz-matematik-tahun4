@@ -24,7 +24,7 @@ function generated(y,key,i){let k=i%4,n=Math.floor(i/4)+1;let max=[0,100,1000,10
  if(k===0){let place=y===1?10:10**Math.min(y,5),num=Math.floor(max*.43)+n*place;let digit=Math.floor(num/place)%10;return Q(`Apakah nilai digit ${digit} pada tempat ${['sa','puluh','ratus','ribu','puluh ribu','ratus ribu'][Math.round(Math.log10(place))]} dalam nombor ${fmt(num)}?`,digit*place,`Nilai digit = ${digit} × ${fmt(place)} = ${fmt(digit*place)}.`)}
  if(k===1){let v=y===1?21+n*4:Math.floor(max*.34)+n*37,round=y===1?10:10**Math.min(y,4);return Q(`Bundarkan ${fmt(v)} kepada ${fmt(round)} terdekat.`,Math.round(v/round)*round,`Bandingkan dengan gandaan ${fmt(round)} yang terdekat.\nJawapan: ${fmt(Math.round(v/round)*round)}.`)}
  if(k===2)return Q(`Lengkapkan pola: ${fmt(a)}, ${fmt(a+b)}, ${fmt(a+2*b)}, _____.`,a+3*b,`Pola bertambah ${fmt(b)} setiap kali.\n${fmt(a+2*b)} + ${fmt(b)} = ${fmt(a+3*b)}.`);
- if(y===6)return Q('Pilih nombor perdana.',[11,13,17,19][n-1],`Nombor perdana mempunyai tepat dua faktor: 1 dan nombor itu sendiri.`,[String([11,13,17,19][n-1]),'21','27','33']);return Q(`Nombor manakah yang paling besar?`,a+b,`Bandingkan digit dari nilai tempat yang paling tinggi.`,[a,a+b,a-1,b].map(String))}
+ if(y===6)return Q(`Pilih nombor perdana daripada ${[11,13,17,19][n-1]}, 21, 27 dan 33.`,[11,13,17,19][n-1],`Nombor perdana mempunyai tepat dua faktor: 1 dan nombor itu sendiri.`,[String([11,13,17,19][n-1]),'21','27','33']);return Q(`Antara ${[a,a+b,a-1,b].map(fmt).join(", ")}, nombor manakah yang paling besar?`,a+b,`Bandingkan digit dari nilai tempat yang paling tinggi.`,[a,a+b,a-1,b].map(String))}
  if(key==='ops'){
  if(k===0)return Q(`${fmt(a)} + ${fmt(b)} = ?`,a+b,`${fmt(a)} + ${fmt(b)} = ${fmt(a+b)}. Tambah mengikut nilai tempat.`);
  if(k===1)return Q(`Aina ada ${fmt(a)} pelekat. Dia memberikan ${fmt(b)} pelekat kepada rakannya. Berapa pelekat yang tinggal?`,a-b,`${fmt(a)} − ${fmt(b)} = ${fmt(a-b)} pelekat.`);
@@ -79,10 +79,11 @@ function generated(y,key,i){let k=i%4,n=Math.floor(i/4)+1;let max=[0,100,1000,10
 }
 function optionsFor(q){if(q.options)return shuffle([...new Set(q.options.map(String))]);let n=Number(q.answer);if(!Number.isFinite(n))return [q.answer];let d=Math.abs(n)<10?1:Math.abs(n)<100?5:Math.abs(n)<1000?10:100;let candidates=[n,n+d,n-d,n+d*2].map(v=>String(Number(v.toFixed(5))));return shuffle([...new Set(candidates)]);}
 function topicBank(y,key){return Array.from({length:16},(_,i)=>({...generated(y,key,i),id:`${y}-${key}-${i}`,topic:key,marks:1,level:i%4===3?'Tinggi':i%4===2?'Sederhana':'Rendah'}))}
+function writtenQuestion(q){return q.options?{...q,text:q.text+'\nPilihan: '+q.options.join(' | ')}:q}
 function examBank(y,mode,set=1){
- if(mode==='matriks'){let keys=TOPICS[y].map(t=>t[0]);return Array.from({length:29},(_,i)=>{let q=generated(y,keys[i%keys.length],(i+set*4)%16);return {...q,id:`M${y}${set}-${i}`,topic:keys[i%keys.length],label:String(i+1),section:i<20?'A':i<26?'B':'C',marks:i<20?1:i<26?3:4,level:i<15?'Rendah':i<24?'Sederhana':'Tinggi',mcq:i<20}})}
+ if(mode==='matriks'){let keys=TOPICS[y].map(t=>t[0]);return Array.from({length:29},(_,i)=>{let q=generated(y,keys[i%keys.length],(i+set*4)%16);if(i>=20)q=writtenQuestion(q);return {...q,id:`M${y}${set}-${i}`,topic:keys[i%keys.length],label:String(i+1),section:i<20?'A':i<26?'B':'C',marks:i<20?1:i<26?3:4,level:i<15?'Rendah':i<24?'Sederhana':'Tinggi',mcq:i<20}})}
  const n=set-1;let qs=[];
- const add=(label,section,topic,marks,level,q,steps=[])=>qs.push({...q,label,section,topic,marks,level,steps,id:`U${y}${set}-${label}`,mcq:false});
+ const add=(label,section,topic,marks,level,q,steps=[])=>qs.push({...writtenQuestion(q),label,section,topic,marks,level,steps,id:`U${y}${set}-${label}`,mcq:false});
  let base=y===4?16432:y===5?216432:1216432,sub=y===4?8765:y===5?108765:708765;
  add('1','A','num',1,'Rendah',Q(`Tuliskan nombor selepas ${fmt(base+n*100)}.`,base+n*100+1,`Tambah 1: ${fmt(base+n*100)} + 1 = ${fmt(base+n*100+1)}.`));
  add('2','A','space',1,'Rendah',Q('Berapakah bilangan sisi bagi pentagon?',5,'Pentagon mempunyai 5 sisi.'));
